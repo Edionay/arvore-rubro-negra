@@ -260,3 +260,62 @@ arvoreRB.prototype.reparoDeExclusao = function (raiz) {
 	}
 	raiz.cor = PRETO
 }
+
+
+
+
+
+/**
+ * Exibe uma árvore em HTML a partir da sua raiz
+ * @param {*} raiz 
+ */
+arvoreRB.prototype.display = function (raiz) {
+	if (!raiz.key)
+		return
+	var position = raiz == raiz.p.esquerdo ? 'left' : 'right'
+	if (raiz.p == this.nil)
+		position = "root"
+
+
+	if (position != 'root') {
+		var pk = raiz.p.p && raiz.p.p != this.nil ? 'node_' + raiz.p.p.key + '_' + raiz.p.key : 'node_' + raiz.p.key;
+		var k = 'node_' + raiz.p.key + '_' + raiz.key
+	}
+	else {
+		var pk = '';
+		var k = 'node_' + raiz.key
+	}
+	var boraiz = position == 'root' ? document.getElementById('arvore') : document.getElementById(pk)
+	boraiz.innerHTML += "<div style='color:" + raiz.cor + ";border-color:" + raiz.cor + "' id='" + k + "'>" + raiz.key + "<br /></div>"
+
+	this.display(raiz.esquerdo)
+	this.display(raiz.direito)
+
+}
+
+
+rb = new arvoreRB();
+
+const inserir = () => {
+	const chave = document.getElementById('input').value
+	document.getElementById('arvore').innerHTML = ''
+	rb.inserir({ key: parseInt(chave), cor: VERMELHO })
+	rb.display(rb.raiz)
+}
+
+const remover = () => {
+	document.getElementById('info').innerText  = ''
+	const chave = document.getElementById('input').value
+	try {
+		const noEncontrado = rb.buscar(rb.raiz, parseInt(chave))
+		rb.excluir(noEncontrado)
+		document.getElementById('arvore').innerHTML = ''
+		rb.display(rb.raiz)
+
+
+	} catch (error) {
+		document.getElementById('info').innerText  = 'Chave não encontrada'
+		console.log("Deu erro")
+	}
+	document.getElementById('input').value = ''
+}
