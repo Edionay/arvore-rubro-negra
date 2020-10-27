@@ -133,3 +133,130 @@ arvoreRB.prototype.buscar = function (raiz, chave) {
 		return this.buscar(raiz.direito, chave)
 
 }
+
+
+arvoreRB.prototype.minimo = function (raiz) {
+	console.log("minimum:" + raiz.key)
+	while (raiz.esquerdo != this.nil) {
+		raiz = raiz.esquerdo
+	}
+	return raiz
+}
+
+/**
+ * Troca um nó de lgar com outro
+ * @param {*} noA 
+ * @param {*} noB 
+ */
+arvoreRB.prototype.transpor = function (noA, noB) {
+	if (noA.p == this.nil) this.raiz = noB
+	else if (noA == noA.p.esquerdo) noA.p.esquerdo = noB
+	else noA.p.direito = noB
+	noB.p = noA.p
+}
+
+/**
+ * Exclui um nó
+ * @param {*} no 
+ */
+arvoreRB.prototype.excluir = function (no) {
+	console.log("delete:" + no.key)
+	let temp = no
+	let corInicialDoNo = temp.cor
+	if (no.esquerdo == this.nil) {
+		raiz = no.direito
+		this.transpor(no, no.direito)
+	}
+	else if (no.direito == this.nil) {
+		raiz = no.esquerdo
+		this.transpor(no, no.esquerdo)
+	}
+	else {
+		temp = this.minimo(no.direito)
+		corInicialDoNo = temp.cor
+		raiz = temp.direito
+		if (temp.p == no) {
+			raiz.p = temp
+		}
+		else {
+			this.transpor(temp, temp.direito)
+			temp.direito = no.direito
+			temp.direito.p = temp
+		}
+		this.transpor(no, temp)
+		temp.esquerdo = no.esquerdo
+		temp.esquerdo.p = temp
+		temp.cor = no.cor
+	}
+	if (corInicialDoNo == PRETO)
+		this.reparoDeExclusao(raiz)
+}
+
+/**
+ * Reparo após exclusão
+ * @param {*} raiz 
+ */
+arvoreRB.prototype.reparoDeExclusao = function (raiz) {
+
+	let irmao
+	while (raiz != this.raiz && raiz.cor == PRETO) {
+		if (raiz == raiz.p.esquerdo) {
+			irmao = raiz.p.direito
+
+
+			if (irmao.cor == VERMELHO) {
+				irmao.cor = PRETO
+				raiz.p.cor = VERMELHO
+				this.rotacaoEsquerda(raiz.p)
+				irmao = raiz.p.direito
+			}
+
+			if (irmao.esquerdo.cor == PRETO && irmao.direito.cor == PRETO) {
+				irmao.cor = VERMELHO
+				raiz = raiz.p
+			}
+
+			else {
+				if (irmao.direito.cor == PRETO) {
+					irmao.esquerdo.cor = PRETO
+					irmao.cor = VERMELHO
+					this.rotacaoDireita(irmao)
+					irmao = raiz.p.direito
+				}
+				irmao.cor = raiz.p.cor
+				raiz.p.cor = PRETO
+				irmao.direito.cor = PRETO
+				this.rotacaoEsquerda(raiz.p)
+				raiz = this.raiz
+			}
+		}
+		else {
+			irmao = raiz.p.esquerdo
+			if (irmao.cor == VERMELHO) {
+				irmao.cor = PRETO
+				raiz.p.cor = VERMELHO
+				this.rotacaoDireita(raiz.p)
+				irmao = raiz.p.esquerdo
+			}
+
+			if (irmao.direito.cor == PRETO && irmao.esquerdo.cor == PRETO) {
+				irmao.cor = VERMELHO
+				raiz = raiz.p
+			}
+			else {
+				if (irmao.esquerdo.cor == PRETO) {
+					irmao.esquerdo.cor = PRETO
+					irmao.cor = VERMELHO
+					this.rotacaoEsquerda(irmao)
+					irmao = raiz.p.esquerdo
+				}
+				irmao.cor = raiz.p.cor
+				raiz.p.cor = PRETO
+				irmao.esquerdo.cor = PRETO
+				this.rotacaoDireita(raiz.p)
+				raiz = this.raiz
+			}
+		}
+	}
+	raiz.cor = PRETO
+}
