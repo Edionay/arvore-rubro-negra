@@ -117,3 +117,19 @@ arvoreRB.prototype.reparoDeInsercao = function (no) {
 	}
 	this.raiz.cor = PRETO
 }
+
+
+/**
+ * Busca por um nó na árvore especificada
+ * @param {*} raiz 
+ * @param {*} chave 
+ */
+arvoreRB.prototype.buscar = function (raiz, chave) {
+	if (chave == raiz.key)
+		return raiz;
+	if (chave < raiz.key)
+		return this.buscar(raiz.esquerdo, chave)
+	else
+		return this.buscar(raiz.direito, chave)
+
+}
