@@ -297,10 +297,12 @@ arvoreRB.prototype.display = function (raiz) {
 rb = new arvoreRB();
 
 const inserir = () => {
+    document.getElementById('info').innerText  = ''
 	const chave = document.getElementById('input').value
 	document.getElementById('arvore').innerHTML = ''
 	rb.inserir({ key: parseInt(chave), cor: VERMELHO })
-	rb.display(rb.raiz)
+    rb.display(rb.raiz)
+    document.getElementById('input').value = ''
 }
 
 const remover = () => {
