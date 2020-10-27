@@ -42,3 +42,78 @@ arvoreRB.prototype.rotacaoDireita = function (no) {
 	filhoEsquerdo.direito = no
 	no.p = filhoEsquerdo
 }
+
+
+
+/**
+ * Insere um no na árvore
+ * @param {*} no 
+ */
+arvoreRB.prototype.inserir = function (no) {
+	no.p = this.nil
+	let temp = this.nil
+	raiz = this.raiz
+	while (raiz != this.nil) {
+		temp = raiz
+		if (no.key < raiz.key) raiz = raiz.esquerdo
+		else raiz = raiz.direito
+	}
+
+	no.p = temp
+	if (temp == this.nil) this.raiz = no
+	else if (no.key < temp.key) temp.esquerdo = no
+	else temp.direito = no
+
+	no.esquerdo = this.nil
+	no.direito = this.nil
+	no.cor = VERMELHO
+	this.reparoDeInsercao(no)
+}
+
+/**
+ * Reparo após inserção
+ * @param {*} no 
+ */
+arvoreRB.prototype.reparoDeInsercao = function (no) {
+
+	let temp
+	while (no.p.cor == VERMELHO) {
+		if (no.p == no.p.p.esquerdo) {
+			temp = no.p.p.direito
+			if (temp.cor == VERMELHO) {
+				no.p.cor = PRETO
+				temp.cor = PRETO
+				no.p.p.cor = VERMELHO
+				no = no.p.p
+			}
+			else {
+				if (no == no.p.direito) {
+					no = no.p
+					this.rotacaoEsquerda(no)
+				}
+				no.p.cor = PRETO
+				no.p.p.cor = VERMELHO
+				this.rotacaoDireita(no.p.p)
+			}
+		}
+		else {
+			temp = no.p.p.esquerdo
+			if (temp.cor == VERMELHO) {
+				no.p.cor = PRETO
+				temp.cor = PRETO
+				no.p.p.cor = VERMELHO
+				no = no.p.p
+			}
+			else {
+				if (no == no.p.esquerdo) {
+					no = no.p
+					this.rotacaoDireita(no)
+				}
+				no.p.cor = PRETO
+				no.p.p.cor = VERMELHO
+				this.rotacaoEsquerda(no.p.p)
+			}
+		}
+	}
+	this.raiz.cor = PRETO
+}
